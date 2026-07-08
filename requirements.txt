@@ -1,0 +1,27 @@
+# MediSense AI v3 — Python Dependencies
+# Install: pip install -r requirements.txt
+
+# ── Web framework ──────────────────────────────────────────────────────────────
+flask==3.0.3
+flask-cors==4.0.1
+gunicorn==22.0.0
+
+# ── Environment ────────────────────────────────────────────────────────────────
+python-dotenv==1.0.1
+
+# ── ML — XGBoost (replaces Random Forest) ─────────────────────────────────────
+xgboost==2.1.1
+scikit-learn==1.5.1
+pandas==2.2.2
+numpy==1.26.4
+joblib==1.4.2
+
+# ── Deep Learning — CNN (X-ray + Skin) ────────────────────────────────────────
+# CPU-only TensorFlow (lighter — works on any machine)
+tensorflow-cpu==2.17.0
+
+# ── Image processing ───────────────────────────────────────────────────────────
+Pillow==10.4.0
+
+# ── HTTP client (Google Maps API) ─────────────────────────────────────────────
+requests==2.32.3

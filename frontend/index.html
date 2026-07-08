@@ -1,0 +1,2553 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>MediSense AI v3</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap"
+    rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #f4f1ed;
+      --surface: #fff;
+      --surface2: #faf8f6;
+      --border: #e6e1da;
+      --text: #1c1917;
+      --t2: #6b6460;
+      --t3: #a09993;
+      --green: #2d6a4f;
+      --gd: #1b4332;
+      --gl: #e8f4ee;
+      --gm: #40916c;
+      --red: #c84b31;
+      --rl: #fdf0ed;
+      --amber: #d4862a;
+      --al: #fef6ea;
+      --blue: #2563a8;
+      --bl: #eff4fd;
+      --sh: 0 4px 20px rgba(0, 0, 0, .09), 0 1px 4px rgba(0, 0, 0, .04);
+      --r: 14px;
+      --rs: 9px;
+      --t: 180ms;
+      --ease: cubic-bezier(.4, 0, .2, 1);
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── Sidebar ── */
+    .sb {
+      width: 248px;
+      flex-shrink: 0;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      position: fixed;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      display: flex;
+      flex-direction: column;
+      z-index: 200;
+    }
+
+    .sb-logo {
+      padding: 22px 18px 16px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .sb-logo-row {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+    }
+
+    .sb-ic {
+      width: 32px;
+      height: 32px;
+      border-radius: 9px;
+      background: var(--green);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .sb-ic .mi {
+      color: #fff;
+      font-size: 17px;
+    }
+
+    .sb-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .sb-ver {
+      font-size: 9px;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      color: var(--t3);
+      margin-top: 2px;
+      margin-left: 41px;
+    }
+
+    .sb-nav {
+      flex: 1;
+      overflow-y: auto;
+      padding: 12px 8px;
+    }
+
+    .sb-lbl {
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--t3);
+      padding: 0 10px;
+      margin: 10px 0 4px;
+    }
+
+    .ni {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 8px 10px;
+      border-radius: var(--rs);
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--t2);
+      transition: all var(--t);
+      user-select: none;
+    }
+
+    .ni:hover {
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    .ni.active {
+      background: var(--gl);
+      color: var(--green);
+      font-weight: 600;
+    }
+
+    .ni .mi {
+      font-size: 17px;
+    }
+
+    .nb {
+      margin-left: auto;
+      background: var(--red);
+      color: #fff;
+      font-size: 9px;
+      font-weight: 700;
+      border-radius: 10px;
+      padding: 1px 6px;
+    }
+
+    .sb-foot {
+      padding: 12px;
+      border-top: 1px solid var(--border);
+    }
+
+    .sb-status {
+      background: var(--gl);
+      border-radius: var(--rs);
+      padding: 9px 11px;
+    }
+
+    .sb-status-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 5px;
+    }
+
+    .sb-status-lbl {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--green);
+    }
+
+    .pdot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 0 2px rgba(45, 106, 79, .2);
+      animation: pulse 2.5s infinite;
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        box-shadow: 0 0 0 2px rgba(45, 106, 79, .2);
+      }
+
+      50% {
+        box-shadow: 0 0 0 5px rgba(45, 106, 79, .04);
+      }
+    }
+
+    .sb-chips {
+      display: flex;
+      gap: 5px;
+      flex-wrap: wrap;
+    }
+
+    .sb-chip {
+      font-size: 9.5px;
+      color: var(--t2);
+      background: rgba(255, 255, 255, .7);
+      border-radius: 4px;
+      padding: 2px 6px;
+    }
+
+    /* ── Main ── */
+    .main {
+      margin-left: 248px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .topbar {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      height: 58px;
+      padding: 0 26px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .tb-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .tb-right {
+      display: flex;
+      gap: 7px;
+    }
+
+    .ib {
+      width: 32px;
+      height: 32px;
+      border-radius: 7px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: var(--t2);
+      transition: all var(--t);
+    }
+
+    .ib:hover {
+      background: var(--bg);
+    }
+
+    .ib .mi {
+      font-size: 17px;
+    }
+
+    /* ── Views ── */
+    .view {
+      display: none;
+      padding: 26px 30px;
+      animation: fadeUp .2s var(--ease);
+    }
+
+    .view.active {
+      display: block;
+    }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(7px);
+      }
+
+      to {
+        opacity: 1;
+        transform: none;
+      }
+    }
+
+    /* ── Hero ── */
+    .hero {
+      background: linear-gradient(135deg, var(--green), var(--gd));
+      border-radius: var(--r);
+      padding: 34px 42px;
+      color: #fff;
+      margin-bottom: 26px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before,
+    .hero::after {
+      content: '';
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, .05);
+    }
+
+    .hero::before {
+      width: 240px;
+      height: 240px;
+      top: -70px;
+      right: -50px;
+    }
+
+    .hero::after {
+      width: 160px;
+      height: 160px;
+      bottom: -60px;
+      right: 110px;
+    }
+
+    .hero-tag {
+      font-size: 9.5px;
+      letter-spacing: 1.8px;
+      text-transform: uppercase;
+      opacity: .65;
+      margin-bottom: 9px;
+      font-weight: 600;
+    }
+
+    .hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 30px;
+      font-weight: 700;
+      line-height: 1.22;
+      margin-bottom: 9px;
+    }
+
+    .hero p {
+      font-size: 13.5px;
+      opacity: .8;
+      max-width: 460px;
+      line-height: 1.65;
+      margin-bottom: 20px;
+    }
+
+    .hero-btns {
+      display: flex;
+      gap: 9px;
+      flex-wrap: wrap;
+    }
+
+    .hb {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border: none;
+      border-radius: 9px;
+      padding: 9px 18px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all var(--t);
+      font-family: 'DM Sans', sans-serif;
+    }
+
+    .hb.solid {
+      background: #fff;
+      color: var(--green);
+    }
+
+    .hb.solid:hover {
+      background: rgba(255, 255, 255, .9);
+      transform: translateY(-1px);
+    }
+
+    .hb.ghost {
+      background: rgba(255, 255, 255, .12);
+      color: #fff;
+      border: 1px solid rgba(255, 255, 255, .25);
+    }
+
+    .hb.ghost:hover {
+      background: rgba(255, 255, 255, .2);
+    }
+
+    /* ── Stats ── */
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 13px;
+      margin-bottom: 26px;
+    }
+
+    .scard {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      padding: 16px 18px;
+    }
+
+    .scard-ic {
+      width: 36px;
+      height: 36px;
+      border-radius: 9px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 9px;
+    }
+
+    .scard-ic .mi {
+      font-size: 18px;
+    }
+
+    .scard-val {
+      font-size: 24px;
+      font-weight: 700;
+      font-family: 'DM Mono', monospace;
+      letter-spacing: -.5px;
+    }
+
+    .scard-lbl {
+      font-size: 11px;
+      color: var(--t3);
+      margin-top: 2px;
+    }
+
+    /* ── Carousel ── */
+    .car-track {
+      display: flex;
+      gap: 13px;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      scrollbar-width: none;
+      padding-bottom: 5px;
+      margin-bottom: 26px;
+    }
+
+    .car-track::-webkit-scrollbar {
+      display: none;
+    }
+
+    .ccard {
+      flex-shrink: 0;
+      width: 258px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      padding: 16px;
+      scroll-snap-align: start;
+      transition: all var(--t);
+    }
+
+    .ccard:hover {
+      box-shadow: var(--sh);
+      transform: translateY(-2px);
+    }
+
+    .ccard.high {
+      border-top: 3px solid var(--red);
+    }
+
+    .ccard.moderate {
+      border-top: 3px solid var(--amber);
+    }
+
+    .ccard.low {
+      border-top: 3px solid var(--blue);
+    }
+
+    .ccard.tip {
+      border-top: 3px solid var(--green);
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: .5px;
+      text-transform: uppercase;
+      padding: 2px 7px;
+      border-radius: 20px;
+      margin-bottom: 9px;
+    }
+
+    .ch-red {
+      background: var(--rl);
+      color: var(--red);
+    }
+
+    .ch-amb {
+      background: var(--al);
+      color: var(--amber);
+    }
+
+    .ch-blu {
+      background: var(--bl);
+      color: var(--blue);
+    }
+
+    .ch-grn {
+      background: var(--gl);
+      color: var(--green);
+    }
+
+    .ccard h3 {
+      font-size: 13.5px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .ccard p {
+      font-size: 12px;
+      color: var(--t2);
+      line-height: 1.5;
+    }
+
+    /* ── Chat ── */
+    .chat-layout {
+      display: grid;
+      grid-template-columns: 1fr 308px;
+      gap: 18px;
+      height: calc(100vh - 132px);
+    }
+
+    .chat-main {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .chat-hdr {
+      padding: 13px 17px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 11px;
+    }
+
+    .chat-av {
+      width: 36px;
+      height: 36px;
+      border-radius: 11px;
+      background: var(--green);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .chat-av .mi {
+      color: #fff;
+      font-size: 18px;
+    }
+
+    .chat-info h3 {
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .chat-info p {
+      font-size: 11px;
+      color: var(--t3);
+    }
+
+    .odot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #22c55e;
+      margin-left: auto;
+      box-shadow: 0 0 0 2px rgba(34, 197, 94, .2);
+    }
+
+    .chat-msgs {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 13px;
+      scroll-behavior: smooth;
+    }
+
+    .chat-msgs::-webkit-scrollbar {
+      width: 3px;
+    }
+
+    .chat-msgs::-webkit-scrollbar-thumb {
+      background: var(--border);
+      border-radius: 2px;
+    }
+
+    .msg {
+      display: flex;
+      gap: 7px;
+      align-items: flex-start;
+      max-width: 84%;
+    }
+
+    .msg.user {
+      margin-left: auto;
+      flex-direction: row-reverse;
+    }
+
+    .mav {
+      width: 29px;
+      height: 29px;
+      flex-shrink: 0;
+      border-radius: 9px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .mav.ai {
+      background: var(--green);
+      color: #fff;
+    }
+
+    .mav.usr {
+      background: var(--bl);
+      color: var(--blue);
+    }
+
+    .mav .mi {
+      font-size: 15px;
+    }
+
+    .bbl {
+      padding: 8px 12px;
+      border-radius: 12px;
+      font-size: 13px;
+      line-height: 1.58;
+    }
+
+    .msg.ai .bbl {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-top-left-radius: 3px;
+    }
+
+    .msg.user .bbl {
+      background: var(--green);
+      color: #fff;
+      border-top-right-radius: 3px;
+    }
+
+    .mtime {
+      font-size: 9.5px;
+      color: var(--t3);
+      padding: 0 3px;
+      margin-top: 2px;
+    }
+
+    .typing {
+      display: flex;
+      gap: 4px;
+      padding: 11px;
+    }
+
+    .typing span {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--t3);
+      animation: bonce .9s infinite;
+    }
+
+    .typing span:nth-child(2) {
+      animation-delay: .15s;
+    }
+
+    .typing span:nth-child(3) {
+      animation-delay: .3s;
+    }
+
+    @keyframes bonce {
+
+      0%,
+      60%,
+      100% {
+        transform: translateY(0);
+      }
+
+      30% {
+        transform: translateY(-6px);
+      }
+    }
+
+    .chat-input-area {
+      padding: 12px 16px;
+      border-top: 1px solid var(--border);
+    }
+
+    .suggest-row {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-bottom: 9px;
+    }
+
+    .sug {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 4px 11px;
+      font-size: 11.5px;
+      cursor: pointer;
+      color: var(--t2);
+      transition: all var(--t);
+      white-space: nowrap;
+    }
+
+    .sug:hover {
+      background: var(--gl);
+      border-color: var(--green);
+      color: var(--green);
+    }
+
+    .input-row {
+      display: flex;
+      gap: 7px;
+      align-items: flex-end;
+      background: var(--bg);
+      border: 1.5px solid var(--border);
+      border-radius: 11px;
+      padding: 6px 9px 6px 13px;
+      transition: border-color var(--t);
+    }
+
+    .input-row:focus-within {
+      border-color: var(--green);
+    }
+
+    .chat-ta {
+      flex: 1;
+      border: none;
+      background: transparent;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      resize: none;
+      outline: none;
+      max-height: 100px;
+      color: var(--text);
+      line-height: 1.5;
+    }
+
+    .chat-ta::placeholder {
+      color: var(--t3);
+    }
+
+    .send-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      border: none;
+      background: var(--green);
+      color: #fff;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: all var(--t);
+    }
+
+    .send-btn:hover {
+      background: var(--gd);
+      transform: scale(1.05);
+    }
+
+    .send-btn:disabled {
+      background: var(--border);
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .send-btn .mi {
+      font-size: 16px;
+    }
+
+    .chat-side {
+      display: flex;
+      flex-direction: column;
+      gap: 13px;
+      overflow-y: auto;
+    }
+
+    .panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      padding: 16px;
+    }
+
+    .panel h4 {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .6px;
+      color: var(--t2);
+      margin-bottom: 11px;
+    }
+
+    /* ── Predict ── */
+    .pred-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+    }
+
+    .pcard {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      padding: 20px;
+    }
+
+    .pcard h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 18px;
+      margin-bottom: 4px;
+    }
+
+    .pcard .sub {
+      font-size: 12px;
+      color: var(--t3);
+      margin-bottom: 16px;
+    }
+
+    .sym-wrap {
+      position: relative;
+      margin-bottom: 9px;
+    }
+
+    .sym-inp {
+      width: 100%;
+      background: var(--bg);
+      border: 1.5px solid var(--border);
+      border-radius: var(--rs);
+      padding: 9px 13px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      color: var(--text);
+      outline: none;
+      transition: border-color var(--t);
+    }
+
+    .sym-inp:focus {
+      border-color: var(--green);
+    }
+
+    .sym-dd {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--rs);
+      margin-top: 3px;
+      max-height: 180px;
+      overflow-y: auto;
+      z-index: 20;
+      box-shadow: var(--sh);
+    }
+
+    .dd-item {
+      padding: 8px 12px;
+      font-size: 13px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: background var(--t);
+    }
+
+    .dd-item:hover {
+      background: var(--bg);
+    }
+
+    .dd-item .mi {
+      font-size: 13px;
+      color: var(--t3);
+    }
+
+    .sel-syms {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 13px;
+      min-height: 32px;
+    }
+
+    .sel-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: var(--gl);
+      color: var(--green);
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 500;
+      border: 1px solid rgba(45, 106, 79, .2);
+    }
+
+    .sel-tag button {
+      border: none;
+      background: none;
+      cursor: pointer;
+      color: var(--green);
+      display: flex;
+      padding: 0;
+    }
+
+    .sel-tag button .mi {
+      font-size: 12px;
+    }
+
+    .ph-text {
+      font-size: 12px;
+      color: var(--t3);
+    }
+
+    .pred-btn {
+      width: 100%;
+      background: var(--green);
+      color: #fff;
+      border: none;
+      border-radius: var(--rs);
+      padding: 11px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all var(--t);
+    }
+
+    .pred-btn:hover {
+      background: var(--gd);
+      transform: translateY(-1px);
+    }
+
+    .pred-btn:disabled {
+      background: var(--border);
+      color: var(--t3);
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* ── Results ── */
+    .rcard {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      padding: 16px;
+      margin-bottom: 11px;
+      transition: box-shadow var(--t);
+    }
+
+    .rcard:hover {
+      box-shadow: var(--sh);
+    }
+
+    .rcard.top {
+      border-left: 4px solid var(--green);
+    }
+
+    .rcard.sec {
+      border-left: 4px solid var(--amber);
+    }
+
+    .rcard.thi {
+      border-left: 4px solid var(--blue);
+    }
+
+    .rcard-hdr {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 5px;
+    }
+
+    .rcard-rank {
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: .8px;
+      text-transform: uppercase;
+      margin-bottom: 3px;
+    }
+
+    .rcard-disease {
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    .rcard-prob {
+      font-family: 'DM Mono', monospace;
+      font-size: 20px;
+      font-weight: 500;
+    }
+
+    .bar {
+      background: var(--bg);
+      border-radius: 4px;
+      height: 5px;
+      overflow: hidden;
+      margin-bottom: 9px;
+    }
+
+    .bar-fill {
+      height: 100%;
+      border-radius: 4px;
+      transition: width .8s var(--ease);
+    }
+
+    .bar-g {
+      background: linear-gradient(90deg, var(--green), var(--gm));
+    }
+
+    .bar-a {
+      background: linear-gradient(90deg, var(--amber), #f59e0b);
+    }
+
+    .bar-b {
+      background: linear-gradient(90deg, var(--blue), #60a5fa);
+    }
+
+    .rcard-spec {
+      font-size: 12px;
+      color: var(--t2);
+    }
+
+    .rcard-spec strong {
+      color: var(--blue);
+    }
+
+    .prec-list {
+      margin-top: 9px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .prec-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      color: var(--t2);
+    }
+
+    .prec-item .mi {
+      font-size: 13px;
+      color: var(--green);
+    }
+
+    .disc {
+      background: var(--al);
+      border: 1px solid rgba(212, 134, 42, .2);
+      border-radius: var(--rs);
+      padding: 11px 13px;
+      display: flex;
+      gap: 8px;
+      font-size: 12px;
+      color: var(--amber);
+      line-height: 1.55;
+      margin-top: 13px;
+    }
+
+    .disc .mi {
+      font-size: 16px;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    /* ── Image ── */
+    .upload-zone {
+      border: 2px dashed var(--border);
+      border-radius: var(--r);
+      padding: 42px 22px;
+      text-align: center;
+      cursor: pointer;
+      transition: all var(--t);
+      background: var(--bg);
+    }
+
+    .upload-zone:hover,
+    .upload-zone.drag {
+      border-color: var(--green);
+      background: var(--gl);
+    }
+
+    .upload-zone h3 {
+      font-size: 14.5px;
+      font-weight: 600;
+      margin: 9px 0 4px;
+    }
+
+    .upload-zone p {
+      font-size: 12px;
+      color: var(--t3);
+    }
+
+    .type-badges {
+      display: flex;
+      gap: 6px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 11px;
+    }
+
+    .tbadge {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      padding: 3px 8px;
+      font-size: 10px;
+      font-family: 'DM Mono', monospace;
+      color: var(--t3);
+    }
+
+    /* ── Doctors ── */
+    .docs-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(265px, 1fr));
+      gap: 13px;
+    }
+
+    .doc-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      padding: 15px;
+      transition: all var(--t);
+    }
+
+    .doc-card:hover {
+      box-shadow: var(--sh);
+      transform: translateY(-2px);
+    }
+
+    .doc-hdr {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .doc-av {
+      width: 40px;
+      height: 40px;
+      border-radius: 11px;
+      background: var(--bl);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+
+    .doc-name {
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .doc-spec {
+      font-size: 11px;
+      color: var(--t3);
+    }
+
+    .doc-rating {
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      font-size: 11.5px;
+      color: var(--amber);
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .doc-rating .mi {
+      font-size: 13px;
+    }
+
+    .doc-info {
+      font-size: 11.5px;
+      color: var(--t2);
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .doc-info span {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .doc-info .mi {
+      font-size: 12px;
+      color: var(--t3);
+    }
+
+    .doc-actions {
+      display: flex;
+      gap: 6px;
+      margin-top: 10px;
+    }
+
+    .doc-btn {
+      flex: 1;
+      background: var(--gl);
+      color: var(--green);
+      border: 1px solid rgba(45, 106, 79, .2);
+      border-radius: 7px;
+      padding: 7px 0;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 11.5px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all var(--t);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+    }
+
+    .doc-btn:hover {
+      background: var(--green);
+      color: #fff;
+    }
+
+    .doc-btn .mi {
+      font-size: 13px;
+    }
+
+    /* ── Map ── */
+    .map-box {
+      background: linear-gradient(135deg, var(--gl), var(--bl));
+      border-radius: var(--r);
+      height: 280px;
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 9px;
+      margin-bottom: 20px;
+      color: var(--t2);
+      text-align: center;
+      padding: 22px;
+    }
+
+    .map-box .mi {
+      font-size: 40px;
+      color: var(--t3);
+    }
+
+    .map-box h3 {
+      font-size: 14.5px;
+      font-weight: 600;
+    }
+
+    .map-box p {
+      font-size: 12px;
+      color: var(--t3);
+      max-width: 260px;
+    }
+
+    /* ── Metrics ── */
+    .met-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 13px;
+    }
+
+    .met-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      padding: 18px;
+    }
+
+    .met-kpis {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 9px;
+    }
+
+    .kpi {
+      background: var(--bg);
+      border-radius: var(--rs);
+      padding: 11px;
+      text-align: center;
+    }
+
+    .kpi-val {
+      font-family: 'DM Mono', monospace;
+      font-size: 19px;
+      font-weight: 600;
+      color: var(--green);
+    }
+
+    .kpi-lbl {
+      font-size: 10.5px;
+      color: var(--t3);
+      margin-top: 2px;
+    }
+
+    /* ── Util ── */
+    .spinner {
+      width: 17px;
+      height: 17px;
+      border: 2px solid rgba(255, 255, 255, .3);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin .6s linear infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 42px 22px;
+      color: var(--t3);
+    }
+
+    .empty-state .mi {
+      font-size: 42px;
+      margin-bottom: 9px;
+      display: block;
+    }
+
+    .empty-state h3 {
+      font-size: 14.5px;
+      font-weight: 600;
+      color: var(--t2);
+      margin-bottom: 4px;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      padding: 2px 7px;
+      border-radius: 5px;
+      font-size: 10.5px;
+      font-weight: 600;
+    }
+
+    .tag-g {
+      background: var(--gl);
+      color: var(--green);
+    }
+
+    .tag-a {
+      background: var(--al);
+      color: var(--amber);
+    }
+
+    .tag-b {
+      background: var(--bl);
+      color: var(--blue);
+    }
+
+    .tag-r {
+      background: var(--rl);
+      color: var(--red);
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: var(--text);
+      color: #fff;
+      padding: 10px 16px;
+      border-radius: 9px;
+      font-size: 13px;
+      z-index: 999;
+      opacity: 0;
+      transform: translateY(9px);
+      transition: all var(--t);
+      pointer-events: none;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: none;
+    }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .sec-hdr {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 13px;
+    }
+
+    .sec-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 17px;
+      font-weight: 600;
+    }
+
+    .mi {
+      font-family: 'Material Icons Round';
+      font-style: normal;
+      line-height: 1;
+      letter-spacing: normal;
+      text-transform: none;
+      white-space: nowrap;
+      word-wrap: normal;
+      font-feature-settings: 'liga';
+      -webkit-font-feature-settings: 'liga';
+      -webkit-font-smoothing: antialiased;
+    }
+
+    @media(max-width:900px) {
+      .sb {
+        transform: translateX(-100%);
+      }
+
+      .main {
+        margin-left: 0;
+      }
+
+      .stats {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .pred-grid,
+      .two-col,
+      .met-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .chat-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .chat-side {
+        display: none;
+      }
+
+      .view {
+        padding: 18px 14px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div style="display:flex;min-height:100vh;">
+
+    <!-- Sidebar -->
+    <aside class="sb" id="sb">
+      <div class="sb-logo">
+        <div class="sb-logo-row">
+          <div class="sb-ic"><span class="mi">monitor_heart</span></div>
+          <div class="sb-name">MediSense</div>
+        </div>
+        <div class="sb-ver">AI Healthcare · v3.0</div>
+      </div>
+      <nav class="sb-nav">
+        <div class="sb-lbl">Core</div>
+        <div class="ni active" onclick="nav('home')"><span class="mi">dashboard</span>Dashboard</div>
+        <div class="ni" onclick="nav('predict')"><span class="mi">biotech</span>Disease Predictor</div>
+        <div class="ni" onclick="nav('chat')"><span class="mi">chat_bubble_outline</span>Chat Consultation</div>
+        <div class="ni" onclick="nav('image')"><span class="mi">image_search</span>Image Diagnosis</div>
+        <div class="sb-lbl">Support</div>
+        <div class="ni" onclick="nav('doctors')"><span class="mi">person_pin_circle</span>Find Doctors</div>
+        <div class="ni" onclick="nav('history')">
+          <span class="mi">history</span>My History
+          <span class="nb" id="hist-badge">0</span>
+        </div>
+        <div class="sb-lbl">System</div>
+        <div class="ni" onclick="nav('about')"><span class="mi">info_outline</span>About</div>
+      </nav>
+      <div class="sb-foot" style="display: none;">
+        <div class="sb-status">
+          <div class="sb-status-row">
+            <span class="sb-status-lbl">XGBoost · X-Ray CNN Active</span>
+            <div class="pdot"></div>
+          </div>
+          <div class="sb-chips">
+            <span class="sb-chip" id="sb-acc">—</span>
+            <span class="sb-chip" id="sb-dis">41 diseases</span>
+            <span class="sb-chip" id="sb-sym">131 syms</span>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <div class="main" id="main">
+      <header class="topbar">
+        <div class="tb-title" id="topbar-title">Dashboard</div>
+        <div class="tb-right">
+          <div class="ib" onclick="toggleSB()"><span class="mi">menu</span></div>
+          <div class="ib"><span class="mi">notifications_none</span></div>
+        </div>
+      </header>
+
+      <!-- HOME -->
+      <div class="view active" id="view-home">
+        <div class="hero">
+          <div class="hero-tag">AI-Powered · XGBoost + CNN · v3.0</div>
+          <h1>Intelligent Disease<br />Prediction System</h1>
+          <p>Symptom-based XGBoost predictions and X-ray pneumonia detection — all in one platform.</p>
+          <div class="hero-btns">
+            <button class="hb solid" onclick="nav('chat')"><span class="mi">chat</span>Start Chat</button>
+            <button class="hb solid" onclick="nav('predict')"><span class="mi">biotech</span>Predict Disease</button>
+            <button class="hb ghost" onclick="nav('image')"><span class="mi">image_search</span>Analyse X-Ray</button>
+          </div>
+        </div>
+        <div class="stats">
+          <div class="scard">
+            <div class="scard-ic" style="background:var(--gl)"><span class="mi"
+                style="color:var(--green)">biotech</span></div>
+            <div class="scard-val" id="st-dis">41</div>
+            <div class="scard-lbl">Diseases Covered</div>
+          </div>
+          <div class="scard">
+            <div class="scard-ic" style="background:var(--bl)"><span class="mi"
+                style="color:var(--blue)">list_alt</span></div>
+            <div class="scard-val" id="st-sym">131</div>
+            <div class="scard-lbl">Symptoms Mapped</div>
+          </div>
+          <div class="scard">
+            <div class="scard-ic" style="background:var(--gl)"><span class="mi"
+                style="color:var(--green)">verified</span></div>
+            <div class="scard-val" id="st-acc">—</div>
+            <div class="scard-lbl">Test Accuracy</div>
+          </div>
+          <div class="scard">
+            <div class="scard-ic" style="background:var(--al)"><span class="mi"
+                style="color:var(--amber)">image_search</span></div>
+            <div class="scard-val">CNN</div>
+            <div class="scard-lbl">X-Ray AI</div>
+          </div>
+        </div>
+        <div class="sec-hdr">
+          <div class="sec-title">Health Alerts & Tips</div>
+        </div>
+        <div class="car-track" id="car-track"></div>
+      </div>
+
+      <!-- CHAT -->
+      <div class="view" id="view-chat">
+        <div class="chat-layout">
+          <div class="chat-main">
+            <div class="chat-hdr">
+              <div class="chat-av"><span class="mi">smart_toy</span></div>
+              <div class="chat-info">
+                <h3>Dr. MediSense</h3>
+                <p>XGBoost AI · v3.0</p>
+              </div>
+              <div class="odot"></div>
+            </div>
+            <div class="chat-msgs" id="chat-msgs"></div>
+            <div class="chat-input-area">
+              <div class="suggest-row" id="suggests">
+                <div class="sug" onclick="fillSug(this)">I have fever and headache</div>
+                <div class="sug" onclick="fillSug(this)">Chest pain and breathlessness</div>
+                <div class="sug" onclick="fillSug(this)">Skin rash and itching</div>
+                <div class="sug" onclick="fillSug(this)">Nausea and vomiting</div>
+              </div>
+              <div class="input-row">
+                <textarea class="chat-ta" id="chat-inp" rows="1" placeholder="Describe your symptoms…"
+                  onkeydown="chatKey(event)" oninput="autoR(this)"></textarea>
+                <button class="send-btn" id="send-btn" onclick="sendChat()">
+                  <span class="mi">send</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="chat-side">
+            <div class="panel">
+              <h4>Collected Symptoms</h4>
+              <div id="sym-panel">
+                <p style="font-size:12px;color:var(--t3);">Symptoms appear here…</p>
+              </div>
+            </div>
+            <div class="panel">
+              <h4>Quick Actions</h4>
+              <div style="display:flex;flex-direction:column;gap:6px;">
+                <button class="doc-btn" onclick="forcePredict()"><span class="mi">biotech</span>Predict Now</button>
+                <button class="doc-btn" onclick="resetChat()"><span class="mi">refresh</span>Reset Chat</button>
+                <button class="doc-btn" onclick="openDoctorsMap()"><span class="mi">person_pin_circle</span>Find
+                  Doctors</button>
+              </div>
+            </div>
+            <div class="panel" style="background:var(--al);border-color:rgba(212,134,42,.2);">
+              <h4 style="color:var(--amber)">Notice</h4>
+              <p style="font-size:12px;color:var(--t2);line-height:1.55;margin-top:2px;">AI predictions are for
+                educational purposes only. Always consult a certified doctor.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PREDICT -->
+      <div class="view" id="view-predict">
+        <div class="pred-grid">
+          <div>
+            <div class="pcard" style="margin-bottom:15px;">
+              <h2>Symptom Selector</h2>
+              <div class="sub">Search 131 symptoms from our database</div>
+              <div class="sym-wrap">
+                <input class="sym-inp" id="sym-search" type="text" placeholder="Type a symptom…" oninput="filterSyms()"
+                  onfocus="showDD()" autocomplete="off" />
+                <div class="sym-dd" id="sym-dd" style="display:none;"></div>
+              </div>
+              <div class="sel-syms" id="sel-syms"><span class="ph-text">No symptoms selected</span></div>
+              <button class="pred-btn" id="pred-btn" onclick="runPredict()" disabled>
+                <span class="mi">biotech</span>Analyse Symptoms
+              </button>
+            </div>
+            <div class="pcard">
+              <h2>Text Description</h2>
+              <div class="sub">AI extracts symptoms from natural language</div>
+              <textarea class="sym-inp" id="txt-inp" rows="4"
+                placeholder="e.g. I have had high fever, body aches and nausea for 3 days…"
+                style="resize:vertical;"></textarea>
+              <button class="pred-btn" style="margin-top:11px;" onclick="runTextPredict()">
+                <span class="mi">psychology</span>Extract & Predict
+              </button>
+            </div>
+          </div>
+          <div>
+            <div class="pcard" style="margin-bottom:15px;">
+              <h2>Results</h2>
+              <div class="sub">Top-3 XGBoost predictions with confidence</div>
+              <div id="results-panel">
+                <div class="empty-state">
+                  <span class="mi">biotech</span>
+                  <h3>No prediction yet</h3>
+                  <p>Select symptoms or enter text</p>
+                </div>
+              </div>
+            </div>
+            <div style="background:var(--bl);border:1px solid rgba(37,99,168,.15);border-radius:var(--r);padding:15px;">
+              <div style="font-size:11.5px;font-weight:600;color:var(--blue);margin-bottom:7px;">XGBoost Pipeline</div>
+              <div style="font-size:12.5px;color:var(--t2);line-height:1.65;">Trained on 4,920 samples · 80/20
+                stratified split · Severity-weighted features · Safety rule layer filters absurd predictions · Returns
+                top-3 with confidence scores.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- IMAGE -->
+      <div class="view" id="view-image">
+        <h2 style="font-family:'Playfair Display',serif;font-size:21px;margin-bottom:4px;">Image Diagnosis</h2>
+        <p style="font-size:12.5px;color:var(--t3);margin-bottom:20px;">X-ray pneumonia detection (trained CNN)</p>
+
+        <div style="margin-bottom:18px;">
+          <div class="pcard">
+            <h3 style="font-size:15px;font-weight:600;margin-bottom:4px;">X-Ray Analysis</h3>
+            <p style="font-size:12px;color:var(--t3);margin-bottom:14px;">Pneumonia vs Normal — uses your uploaded
+              xray_model.hdf5</p>
+            <div class="upload-zone" id="xray-drop" onclick="document.getElementById('xray-file').click()"
+              ondragover="event.preventDefault();this.classList.add('drag')" ondragleave="this.classList.remove('drag')"
+              ondrop="handleDrop(event,'xray')">
+              <span class="mi" style="font-size:38px;color:var(--t3);">cloud_upload</span>
+              <h3>Upload Chest X-Ray</h3>
+              <p>JPG or PNG · Any resolution</p>
+              <div class="type-badges"><span class="tbadge">JPEG</span><span class="tbadge">PNG</span><span
+                  class="tbadge">X-Ray</span></div>
+              <input type="file" id="xray-file" accept="image/*" style="display:none"
+                onchange="previewAndAnalyse(this,'xray')" />
+            </div>
+            <div id="xray-preview" style="display:none;margin-top:13px;">
+              <img id="xray-img" src="" alt=""
+                style="width:100%;max-height:260px;object-fit:contain;background:var(--bg);border-radius:var(--rs);" />
+              <div id="xray-result" style="margin-top:11px;"></div>
+            </div>
+          </div>
+
+          <!-- SKIN FEATURE DISABLED FOR DEMO -->
+          <!--
+      <div class="pcard" style="margin-top:18px;">
+        <h3 style="font-size:15px;font-weight:600;margin-bottom:4px;">Skin Analysis</h3>
+        <p style="font-size:12px;color:var(--t3);margin-bottom:14px;">Rash · Acne · Fungal infection · Normal skin</p>
+        <div class="upload-zone" id="skin-drop"
+          onclick="document.getElementById('skin-file').click()"
+          ondragover="event.preventDefault();this.classList.add('drag')"
+          ondragleave="this.classList.remove('drag')"
+          ondrop="handleDrop(event,'skin')">
+          <span class="mi" style="font-size:38px;color:var(--t3);">face</span>
+          <h3>Upload Skin Image</h3>
+          <p>Photo of affected area</p>
+          <div class="type-badges"><span class="tbadge">JPEG</span><span class="tbadge">PNG</span><span class="tbadge">Skin</span></div>
+          <input type="file" id="skin-file" accept="image/*" style="display:none" onchange="previewAndAnalyse(this,'skin')"/>
+        </div>
+        <div id="skin-preview" style="display:none;margin-top:13px;">
+          <img id="skin-img" src="" alt="" style="width:100%;max-height:260px;object-fit:contain;background:var(--bg);border-radius:var(--rs);"/>
+          <div id="skin-result" style="margin-top:11px;"></div>
+        </div>
+      </div>
+      -->
+        </div>
+
+        <div class="pcard">
+          <div
+            style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--t2);margin-bottom:11px;">
+            CNN Architecture</div>
+          <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;">
+            <span class="tag tag-b">Input 180×180</span>
+            <span class="mi" style="color:var(--t3);font-size:13px;">arrow_forward</span>
+            <span class="tag tag-g">Conv2D Blocks</span>
+            <span class="mi" style="color:var(--t3);font-size:13px;">arrow_forward</span>
+            <span class="tag tag-g">MaxPooling</span>
+            <span class="mi" style="color:var(--t3);font-size:13px;">arrow_forward</span>
+            <span class="tag tag-a">Dense + Dropout</span>
+            <span class="mi" style="color:var(--t3);font-size:13px;">arrow_forward</span>
+            <span class="tag tag-r">Softmax (NORMAL/PNEUMONIA)</span>
+          </div>
+          <p style="font-size:11px;color:var(--t3);margin-top:10px;">X-Ray model: your uploaded xray_model.hdf5</p>
+        </div>
+      </div>
+
+      <!-- DOCTORS -->
+      <div class="view" id="view-doctors">
+        <h2 style="font-family:'Playfair Display',serif;font-size:21px;margin-bottom:4px;">Find Nearby Doctors</h2>
+        <p style="font-size:12.5px;color:var(--t3);margin-bottom:20px;">Opens Google Maps search for the recommended
+          specialist near you</p>
+        <div class="map-box">
+          <span class="mi">map</span>
+          <h3>Live Doctor Map</h3>
+          <p>Use Google Maps search to find real nearby specialists. No API key required.</p>
+          <button class="hb ghost"
+            style="color:var(--text);background:var(--surface);border:1px solid var(--border);font-size:12px;padding:8px 16px;margin-top:4px;"
+            onclick="getLocation()">
+            <span class="mi">my_location</span>Use My Location
+          </button>
+        </div>
+        <div style="display:flex;align-items:center;gap:11px;margin-bottom:15px;flex-wrap:wrap;">
+          <div class="sec-title">Specialists</div>
+          <select id="spec-filter" class="sym-inp" style="width:190px;" onchange="filterDocs()">
+            <option value="">All Specialisations</option>
+            <option>General Physician</option>
+            <option>Cardiologist</option>
+            <option>Dermatologist</option>
+            <option>Neurologist</option>
+            <option>Gastroenterologist</option>
+            <option>Endocrinologist</option>
+            <option>Pulmonologist</option>
+            <option>Infectious Disease Specialist</option>
+          </select>
+          <input class="sym-inp" id="doc-q" type="text" placeholder="Search…" style="width:150px;"
+            oninput="filterDocs()" />
+        </div>
+        <div class="docs-grid" id="docs-grid"></div>
+      </div>
+
+      <!-- HISTORY -->
+      <div class="view" id="view-history">
+        <h2 style="font-family:'Playfair Display',serif;font-size:21px;margin-bottom:4px;">Prediction History</h2>
+        <p style="font-size:12.5px;color:var(--t3);margin-bottom:20px;">Last 20 predictions · stored locally in your
+          browser</p>
+        <div id="hist-list">
+          <div class="empty-state"><span class="mi">history</span>
+            <h3>No history yet</h3>
+            <p>Run a prediction to see it here</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- METRICS -->
+      <!--
+  <div class="view" id="view-metrics">
+    <h2 style="font-family:'Playfair Display',serif;font-size:21px;margin-bottom:4px;">Model Metrics</h2>
+    <p style="font-size:12.5px;color:var(--t3);margin-bottom:20px;">XGBoost · 80/20 split · Live from backend</p>
+    <div id="metrics-panel">
+      <div class="empty-state"><span class="mi">analytics</span><h3>Loading…</h3></div>
+    </div>
+  </div>
+  -->
+
+      <!-- ABOUT -->
+      <div class="view" id="view-about">
+        <div style="max-width:660px;">
+          <h2 style="font-family:'Playfair Display',serif;font-size:24px;margin-bottom:7px;">About MediSense AI v3</h2>
+          <p style="font-size:13.5px;color:var(--t2);line-height:1.7;margin-bottom:20px;">Full-stack AI healthcare
+            platform: XGBoost symptom prediction, X-ray CNN (your trained model), real Google Maps doctor search, and
+            stateful chat.</p>
+          <div class="two-col" style="margin-bottom:15px;">
+            <div class="pcard">
+              <div
+                style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--t2);margin-bottom:7px;">
+                ML Stack</div>
+              <div style="font-size:12.5px;color:var(--t2);line-height:1.7;">XGBoost (replaced RF) · 300 trees ·
+                Severity-weighted features · Safety rule layer · Image CNN</div>
+            </div>
+            <div class="pcard">
+              <div
+                style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--t2);margin-bottom:7px;">
+                Architecture</div>
+              <div style="font-size:12.5px;color:var(--t2);line-height:1.7;">Flask app factory · Blueprints · Service
+                layer · Stateless chat backend · Multi-modal fusion · Standard JSON API</div>
+            </div>
+          </div>
+          <div style="background:var(--al);border:1px solid rgba(212,134,42,.2);border-radius:var(--r);padding:16px;">
+            <div style="font-size:12.5px;font-weight:700;color:var(--amber);margin-bottom:7px;">⚕️ Medical Disclaimer
+            </div>
+            <div style="font-size:12.5px;color:var(--t2);line-height:1.65;">MediSense AI is for <strong>educational and
+                demonstration purposes only</strong>. AI predictions are NOT medical diagnoses. Always consult a
+              qualified healthcare professional.</div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /main -->
+  </div>
+
+  <div class="toast" id="toast"><span class="mi">check_circle</span><span id="toast-msg">Done</span></div>
+
+  <script>
+    const API = 'http://localhost:5000';
+    let SYMS = [], DOCS_ALL = [], predHistory = [], lastPred = null;
+    let chatAcc = [];   // accumulated symptoms across chat turns
+    let chatContext = null;
+    let lastMapsUrl = 'https://www.google.com/maps/search/General+Physician+near+me';
+    let lastPrimarySpecialist = 'General Physician';
+    let lastSecondarySpecialists = [];
+
+    // ── Navigation ────────────────────────────────────────────────────────────────
+    const TITLES = {
+      home: 'Dashboard', chat: 'Chat Consultation', predict: 'Disease Predictor',
+      image: 'Image Diagnosis', doctors: 'Find Doctors', history: 'My History',
+      about: 'About'
+    };
+
+    function nav(id) {
+      document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+      document.querySelectorAll('.ni').forEach(n => n.classList.remove('active'));
+      document.getElementById('view-' + id)?.classList.add('active');
+      document.getElementById('topbar-title').textContent = TITLES[id] || '';
+      document.querySelectorAll('.ni').forEach(n => {
+        if (n.getAttribute('onclick')?.includes(`'${id}'`)) n.classList.add('active');
+      });
+      // if (id === 'metrics') loadMetrics();
+      if (id === 'doctors') renderDoctorsSearch();
+    }
+
+    function toggleSB() {
+      const sb = document.getElementById('sb'), m = document.getElementById('main');
+      const hidden = sb.style.transform === 'translateX(-100%)';
+      sb.style.transform = hidden ? '' : 'translateX(-100%)';
+      m.style.marginLeft = hidden ? '248px' : '0';
+    }
+
+    // ── Toast ─────────────────────────────────────────────────────────────────────
+    function toast(msg, good = true) {
+      const t = document.getElementById('toast');
+      document.getElementById('toast-msg').textContent = msg;
+      t.querySelector('.mi').textContent = good ? 'check_circle' : 'error_outline';
+      t.querySelector('.mi').style.color = good ? '#4ade80' : '#f87171';
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 3000);
+    }
+
+    // ── API helper ────────────────────────────────────────────────────────────────
+    async function api(path, opts = {}) {
+      try {
+        const r = await fetch(API + path, {
+          headers: { 'Content-Type': 'application/json', ...opts.headers },
+          ...opts
+        });
+        return await r.json();
+      } catch { return null; }
+    }
+
+    function ft() { return new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }); }
+    function autoR(el) { el.style.height = 'auto'; el.style.height = Math.min(el.scrollHeight, 100) + 'px'; }
+
+    function applySpecialistInfo(data = {}) {
+      lastPrimarySpecialist = data.primary_specialist || lastPrimarySpecialist || 'General Physician';
+      lastSecondarySpecialists = data.secondary_specialists || [];
+      lastMapsUrl = data.maps_url || `https://www.google.com/maps/search/${encodeURIComponent(lastPrimarySpecialist + ' near me').replace(/%20/g, '+')}`;
+    }
+
+    function specialistBlock(data = {}) {
+      const primary = data.primary_specialist || lastPrimarySpecialist;
+      const secondary = data.secondary_specialists || lastSecondarySpecialists || [];
+      return `
+    <div class="disc" style="background:var(--gl);border-color:rgba(45,106,79,.2);color:var(--green);">
+      <span class="mi">medical_services</span>
+      <div>
+        <strong>Recommended specialist: ${primary}</strong>
+        ${secondary.length ? `<br><span style="color:var(--t2);">Also consider: ${secondary.join(', ')}</span>` : ''}
+      </div>
+    </div>`;
+    }
+
+    function openDoctorsMap(url = lastMapsUrl) {
+      window.open(url || lastMapsUrl, '_blank');
+    }
+
+    // ── Init ──────────────────────────────────────────────────────────────────────
+    async function init() {
+      await Promise.all([loadModelInfo(), loadCarousel()]);
+      initChat();
+      loadHistory();
+    }
+
+    async function loadModelInfo() {
+      const d = await api('/api/model/info');
+      if (d?.data?.metrics) {
+        const m = d.data.metrics;
+        const acc = m.test_accuracy ? (m.test_accuracy * 100).toFixed(1) + '%' : '—';
+        document.getElementById('st-acc').textContent = acc;
+        document.getElementById('st-dis').textContent = d.data.total_diseases || '41';
+        document.getElementById('st-sym').textContent = d.data.total_symptoms || '131';
+        document.getElementById('sb-acc').textContent = 'Acc ' + acc;
+        document.getElementById('sb-dis').textContent = (d.data.total_diseases || 41) + ' diseases';
+        document.getElementById('sb-sym').textContent = (d.data.total_symptoms || 131) + ' syms';
+      }
+      const s = await api('/api/symptoms');
+      if (s?.data?.symptoms) SYMS = s.data.symptoms;
+    }
+
+    // ── Carousel ──────────────────────────────────────────────────────────────────
+    async function loadCarousel() {
+      const d = await api('/api/trending');
+      const items = [
+        ...(d?.data?.alerts || []).map(t => ({ ...t, type: 'alert' })),
+        ...(d?.data?.tips || []).map(t => ({ ...t, type: 'tip' })),
+      ];
+      const chipMap = { high: 'ch-red', moderate: 'ch-amb', low: 'ch-blu' };
+      document.getElementById('car-track').innerHTML = items.map(c => `
+    <div class="ccard ${c.type === 'alert' ? (c.severity || 'low') : 'tip'}">
+      ${c.type === 'alert'
+          ? `<div class="chip ${chipMap[c.severity] || 'ch-amb'}"><span class="mi" style="font-size:9px;">trending_up</span>${c.cases}</div>`
+          : `<div class="chip ch-grn"><span class="mi" style="font-size:9px;">${c.icon || 'favorite'}</span>Tip</div>`}
+      <h3>${c.type === 'alert' ? c.disease : c.title}</h3>
+      <p>${c.type === 'alert' ? c.precaution : c.body}</p>
+    </div>`).join('');
+    }
+
+    // ── Chat (stateful, fully fixed) ──────────────────────────────────────────────
+    // ── Chat (NEW FIXED FLOW) ─────────────────────────────
+
+    function initChat() {
+      chatAcc = [];
+      chatContext = null;
+      document.getElementById('chat-msgs').innerHTML = '';
+      updateSymPanel([]);
+
+      appendMsg('ai',
+        `Hello! I'm <strong>Dr. MediSense</strong> 👋<br/><br/>
+    Describe symptoms.<br/><br/>
+    Type <strong>"done"</strong> or click <strong>Predict Now</strong>.`
+      );
+    }
+
+    function chatKey(e) {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendChat();
+      }
+    }
+
+    function appendMsg(role, html) {
+      const wrap = document.getElementById('chat-msgs');
+      const isUser = role === 'user';
+      const div = document.createElement('div');
+      div.className = `msg ${isUser ? 'user' : 'ai'}`;
+      div.innerHTML = `
+    <div class="mav ${isUser ? 'usr' : 'ai'}"><span class="mi">${isUser ? 'person' : 'smart_toy'}</span></div>
+    <div>
+      <div class="bbl">${html}</div>
+      <div class="mtime">${ft()}</div>
+    </div>`;
+      wrap.appendChild(div);
+      wrap.scrollTop = wrap.scrollHeight;
+    }
+
+    function updateSymPanel(syms) {
+      const panel = document.getElementById('sym-panel');
+      panel.innerHTML = !syms.length
+        ? '<p style="font-size:12px;color:var(--t3);">Symptoms appear here...</p>'
+        : syms.map(s => `<div class="sel-tag" style="margin:0 5px 6px 0;">${s.replace(/_/g, ' ')}</div>`).join('');
+    }
+
+    function showTyping() {
+      const wrap = document.getElementById('chat-msgs');
+      const div = document.createElement('div');
+      div.className = 'msg ai';
+      div.id = 'typing-msg';
+      div.innerHTML = `
+    <div class="mav ai"><span class="mi">smart_toy</span></div>
+    <div class="bbl"><div class="typing"><span></span><span></span><span></span></div></div>`;
+      wrap.appendChild(div);
+      wrap.scrollTop = wrap.scrollHeight;
+    }
+
+    function rmTyping() {
+      document.getElementById('typing-msg')?.remove();
+    }
+
+    function buildChatCards(symptoms, preds, info = {}) {
+      symptoms = symptoms || [];
+      preds = preds || [];
+      return `
+    <div style="font-size:11.5px;color:var(--t3);margin-bottom:9px;">Matched: ${symptoms.map(s => `<strong>${s.replace(/_/g, ' ')}</strong>`).join(', ')}</div>
+    ${preds.map((p, i) => {
+        const rs = RANK_STYLES[i] || RANK_STYLES[2];
+        return `<div class="rcard ${rs.cls}" style="margin-bottom:9px;">
+        <div class="rcard-hdr">
+          <div>
+            <div class="rcard-rank" style="color:${rs.col}">${rs.label}</div>
+            <div class="rcard-disease">${p.disease}</div>
+          </div>
+          <div class="rcard-prob" style="color:${rs.col}">${p.probability}%</div>
+        </div>
+        <div class="bar"><div class="bar-fill ${rs.bar}" style="width:${p.probability}%"></div></div>
+        <div class="rcard-spec">Specialist: <strong>${p.specialization}</strong></div>
+      </div>`;
+      }).join('')}
+    ${info.primary_specialist ? specialistBlock(info) : ''}
+    <div class="disc"><span class="mi">warning_amber</span><div>AI-assisted prediction only. NOT a medical diagnosis. Consult a certified doctor.</div></div>`;
+    }
+
+    function fillSug(el) {
+      const inp = document.getElementById('chat-inp');
+      inp.value = el.textContent.trim();
+      inp.focus();
+      autoR(inp);
+    }
+
+    function resetChat() {
+      initChat();
+    }
+
+    function fmtAI(text) {
+      const safe = String(text || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+
+      return safe
+        .replace(/^###\s*(.+)$/gm, '<strong>$1</strong>')
+        .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+        .replace(/^\*\s+/gm, '&bull; ')
+        .replace(/\n{2,}/g, '<br><br>')
+        .replace(/\n/g, '<br>');
+    }
+
+    function extractChatSymptoms(text) {
+      const normalized = text.toLowerCase().replace(/[_-]+/g, ' ');
+      const found = [];
+      const phraseMap = {
+        'fever': 'high_fever',
+        'high fever': 'high_fever',
+        'mild fever': 'mild_fever',
+        'cough': 'cough',
+        'coughing': 'cough',
+        'headache': 'headache',
+        'head pain': 'headache',
+        'chest pain': 'chest_pain',
+        'breathlessness': 'breathlessness',
+        'shortness of breath': 'breathlessness',
+        'skin rash': 'skin_rash',
+        'rash': 'skin_rash',
+        'itching': 'itching',
+        'nausea': 'nausea',
+        'vomiting': 'vomiting',
+        'diarrhea': 'diarrhoea',
+        'diarrhoea': 'diarrhoea',
+        'fatigue': 'fatigue',
+        'tired': 'fatigue',
+        'chills': 'chills',
+        'sneezing': 'continuous_sneezing'
+      };
+
+      Object.entries(phraseMap).forEach(([phrase, sym]) => {
+        const re = new RegExp(`\\b${phrase.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'i');
+        if (re.test(normalized) && SYMS.includes(sym) && !found.includes(sym)) {
+          found.push(sym);
+        }
+      });
+
+      SYMS.forEach(s => {
+        const label = s.replace(/_/g, ' ');
+        const re = new RegExp(`\\b${label.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'i');
+        if (re.test(normalized) && !found.includes(s)) found.push(s);
+      });
+
+      return found;
+    }
+
+    async function answerFollowup(question) {
+      if (!chatContext?.predictions?.length) {
+        appendMsg('ai', 'Please add symptoms first, then type <strong>done</strong> or click <strong>Predict Now</strong>.');
+        return;
+      }
+
+      showTyping();
+      const exp = await api('/api/explain', {
+        method: 'POST',
+        body: JSON.stringify({
+          predictions: chatContext.predictions,
+          symptoms: chatContext.symptoms,
+          question
+        })
+      });
+      rmTyping();
+
+      if (exp?.data?.explanation) {
+        appendMsg('ai', fmtAI(exp.data.explanation));
+      } else {
+        appendMsg('ai', `<strong>Explanation failed:</strong> ${exp?.message || 'LLM backend unavailable'}`);
+      }
+    }
+
+    async function sendChat() {
+      const inp = document.getElementById('chat-inp');
+      const msg = inp.value.trim();
+      if (!msg) return;
+
+      inp.value = '';
+      appendMsg('user', msg);
+
+      // extract symptoms
+      const extracted = extractChatSymptoms(msg);
+      extracted.forEach(sym => {
+        if (!chatAcc.includes(sym)) {
+          chatAcc.push(sym);
+        }
+      });
+
+      updateSymPanel(chatAcc);
+
+      // trigger
+      if (msg.toLowerCase() === 'done') {
+        runPrediction();
+        return;
+      }
+
+      if (extracted.length) {
+        appendMsg('ai', `Noted: ${chatAcc.map(s => s.replace(/_/g, ' ')).join(', ')}`);
+        return;
+      }
+
+      await answerFollowup(msg);
+    }
+
+    function forcePredict() {
+      if (!chatAcc.length) {
+        toast("No symptoms", false);
+        return;
+      }
+      runPrediction();
+    }
+
+    async function runPrediction() {
+      showTyping();
+
+      const res = await api('/api/predict/symptoms', {
+        method: 'POST',
+        body: JSON.stringify({ symptoms: chatAcc })
+      });
+
+      rmTyping();
+
+      if (!res || res.status === 'error') {
+        appendMsg('ai', 'Prediction failed');
+        return;
+      }
+
+      const preds = res.data.predictions;
+      const matched = res.data.matched_symptoms || chatAcc;
+      applySpecialistInfo(res.data);
+      chatAcc = matched;
+      chatContext = { symptoms: matched, predictions: preds };
+      updateSymPanel(chatAcc);
+
+      appendMsg('ai', buildChatCards(matched, preds, res.data));
+
+      // 🔥 Gemini explanation
+      const exp = await api('/api/explain', {
+        method: 'POST',
+        body: JSON.stringify({
+          predictions: preds,
+          symptoms: matched
+        })
+      });
+
+      if (exp?.data?.explanation) {
+        appendMsg('ai', `<strong>Explanation:</strong><br>${fmtAI(exp.data.explanation)}`);
+      } else {
+        appendMsg('ai', `<strong>Explanation failed:</strong> ${exp?.message || 'LLM backend unavailable'}`);
+      }
+    }
+
+    async function sendPredictionToChat(data, label = 'Disease Predictor result') {
+      const symptoms = data?.matched_symptoms || data?.symptoms || selSyms || [];
+      const preds = data?.predictions || [];
+      if (!preds.length) return;
+
+      applySpecialistInfo(data);
+      chatAcc = [...symptoms];
+      chatContext = { symptoms: chatAcc, predictions: preds };
+      nav('chat');
+      updateSymPanel(chatAcc);
+      appendMsg('user', label);
+      appendMsg('ai', buildChatCards(chatAcc, preds, data));
+
+      showTyping();
+      const exp = await api('/api/explain', {
+        method: 'POST',
+        body: JSON.stringify({
+          predictions: preds,
+          symptoms: chatAcc
+        })
+      });
+      rmTyping();
+
+      if (exp?.data?.explanation) {
+        appendMsg('ai', `<strong>Explanation:</strong><br>${fmtAI(exp.data.explanation)}`);
+      } else {
+        appendMsg('ai', `<strong>Explanation failed:</strong> ${exp?.message || 'LLM backend unavailable'}`);
+      }
+    }
+
+    // ── Disease Predictor ─────────────────────────────────────────────────────────
+    let selSyms = [];
+
+    function filterSyms() {
+      const q = document.getElementById('sym-search').value.toLowerCase().replace(/\s+/g, '_');
+      const dd = document.getElementById('sym-dd');
+      if (!q) { dd.style.display = 'none'; return; }
+      const m = SYMS.filter(s => s.includes(q) && !selSyms.includes(s)).slice(0, 10);
+      if (!m.length) { dd.style.display = 'none'; return; }
+      dd.innerHTML = m.map(s => `<div class="dd-item" onclick="addSym('${s}')"><span class="mi">add</span>${s.replace(/_/g, ' ')}</div>`).join('');
+      dd.style.display = 'block';
+    }
+    function showDD() { if (document.getElementById('sym-search').value) filterSyms(); }
+    document.addEventListener('click', e => { if (!e.target.closest('.sym-wrap')) document.getElementById('sym-dd').style.display = 'none'; });
+
+    function addSym(s) {
+      if (selSyms.includes(s)) return;
+      selSyms.push(s); renderSyms();
+      document.getElementById('sym-search').value = '';
+      document.getElementById('sym-dd').style.display = 'none';
+      document.getElementById('pred-btn').disabled = !selSyms.length;
+    }
+    function rmSym(s) { selSyms = selSyms.filter(x => x !== s); renderSyms(); document.getElementById('pred-btn').disabled = !selSyms.length; }
+    function renderSyms() {
+      const el = document.getElementById('sel-syms');
+      el.innerHTML = !selSyms.length
+        ? '<span class="ph-text">No symptoms selected</span>'
+        : selSyms.map(s => `<div class="sel-tag">${s.replace(/_/g, ' ')}<button onclick="rmSym('${s}')"><span class="mi">close</span></button></div>`).join('');
+    }
+
+    async function runPredict() {
+      if (!selSyms.length) return;
+      showLoading();
+      const d = await api('/api/predict/symptoms', { method: 'POST', body: JSON.stringify({ symptoms: selSyms }) });
+      if (!d || d.status === 'error') { showErr(d?.message || 'Backend offline. Run: py backend/app.py'); return; }
+      renderResults(d.data.predictions, d.data.matched_symptoms, d.data);
+      saveHistory(d.data.matched_symptoms, d.data.predictions);
+      await sendPredictionToChat(d.data, 'Explain this Disease Predictor result');
+    }
+    async function runTextPredict() {
+      const txt = document.getElementById('txt-inp').value.trim();
+      if (!txt) return;
+      showLoading();
+      const d = await api('/api/predict/symptoms', { method: 'POST', body: JSON.stringify({ text: txt }) });
+      if (!d || d.status === 'error') { showErr(d?.message || 'Backend offline.'); return; }
+      renderResults(d.data.predictions, d.data.matched_symptoms, d.data);
+      saveHistory(d.data.matched_symptoms, d.data.predictions);
+      await sendPredictionToChat(d.data, 'Explain this text prediction');
+    }
+
+    function showLoading() {
+      document.getElementById('results-panel').innerHTML = `
+    <div style="text-align:center;padding:40px;color:var(--t3);">
+      <div class="spinner" style="margin:0 auto 13px;border-color:rgba(45,106,79,.2);border-top-color:var(--green);width:26px;height:26px;border-width:3px;"></div>
+      <div style="font-size:13px;">Running XGBoost inference…</div>
+    </div>`;
+    }
+    function showErr(msg) {
+      document.getElementById('results-panel').innerHTML = `
+    <div class="disc" style="background:var(--rl);border-color:rgba(200,75,49,.2);">
+      <span class="mi" style="color:var(--red)">error_outline</span>
+      <div style="color:var(--red)">${msg}</div>
+    </div>`;
+    }
+
+    const RANK_STYLES = [
+      { cls: 'top', col: 'var(--green)', bar: 'bar-g', label: 'Primary Assessment' },
+      { cls: 'sec', col: 'var(--amber)', bar: 'bar-a', label: 'Secondary Assessment' },
+      { cls: 'thi', col: 'var(--blue)', bar: 'bar-b', label: 'Tertiary Assessment' },
+    ];
+
+    function renderResults(preds, matched, info = {}) {
+      applySpecialistInfo(info);
+      lastPred = { symptoms: matched || selSyms, predictions: preds, ...info };
+      const panel = document.getElementById('results-panel');
+      panel.innerHTML = `
+    ${matched ? `<p style="font-size:11.5px;color:var(--t3);margin-bottom:13px;">Matched: ${matched.map(s => `<strong>${s.replace(/_/g, ' ')}</strong>`).join(', ')}</p>` : ''}
+    ${preds.map((p, i) => {
+        const rs = RANK_STYLES[i] || RANK_STYLES[2];
+        return `<div class="rcard ${rs.cls}">
+        <div class="rcard-hdr">
+          <div>
+            <div class="rcard-rank" style="color:${rs.col}">${rs.label}</div>
+            <div class="rcard-disease">${p.disease}</div>
+          </div>
+          <div class="rcard-prob" style="color:${rs.col}">${p.probability}%</div>
+        </div>
+        <div class="bar"><div class="bar-fill ${rs.bar}" style="width:${p.probability}%"></div></div>
+        <div class="rcard-spec">Specialist: <strong>${p.specialization}</strong></div>
+        ${p.description ? `<p style="font-size:12px;color:var(--t2);margin-top:7px;line-height:1.55;">${p.description.slice(0, 200)}${p.description.length > 200 ? '…' : ''}</p>` : ''}
+        ${p.precautions?.length ? `<div class="prec-list">${p.precautions.map(pr => `<div class="prec-item"><span class="mi">check_circle_outline</span>${pr}</div>`).join('')}</div>` : ''}
+        ${p.warning ? `<div style="font-size:11px;color:var(--amber);margin-top:6px;">⚠️ ${p.warning}</div>` : ''}
+      </div>`;
+      }).join('')}
+    ${specialistBlock(info)}
+    <div class="disc"><span class="mi">warning_amber</span><div>AI-assisted prediction only. NOT a medical diagnosis. Consult a certified doctor.</div></div>
+    <div style="display:flex;gap:9px;margin-top:13px;">
+      <button class="doc-btn" style="flex:1;padding:9px;" onclick="openDoctorsMap()"><span class="mi">person_pin_circle</span>Find Specialists</button>
+    </div>`;
+    }
+
+    // ── Image Diagnosis ───────────────────────────────────────────────────────────
+    function handleDrop(e, type) {
+      if (type === 'skin') return; // SKIN DISABLED
+      e.preventDefault();
+      document.getElementById(type + '-drop').classList.remove('drag');
+      const f = e.dataTransfer.files[0];
+      if (f?.type.startsWith('image/')) processImageFile(f, type);
+    }
+    function previewAndAnalyse(inp, type) {
+      if (type === 'skin') return; // SKIN DISABLED
+      if (inp.files[0]) processImageFile(inp.files[0], type);
+    }
+
+    function processImageFile(file, type) {
+      const reader = new FileReader();
+      reader.onload = e => {
+        document.getElementById(type + '-img').src = e.target.result;
+        document.getElementById(type + '-preview').style.display = 'block';
+        document.getElementById(type + '-result').innerHTML = `
+      <div style="text-align:center;padding:20px;color:var(--t3);">
+        <div class="spinner" style="margin:0 auto 10px;border-color:rgba(45,106,79,.2);border-top-color:var(--green);width:22px;height:22px;border-width:2.5px;"></div>
+        <div style="font-size:12.5px;">Analysing with CNN…</div>
+      </div>`;
+        uploadImage(file, type);
+      };
+      reader.readAsDataURL(file);
+    }
+
+    async function uploadImage(file, type) {
+      const fd = new FormData(); fd.append('image', file);
+      try {
+        const r = await fetch(`${API}/api/predict/${type}`, { method: 'POST', body: fd });
+        const d = await r.json();
+        renderImageResult(d.data || {}, type);
+      } catch {
+        document.getElementById(type + '-result').innerHTML = `
+      <div class="disc" style="background:var(--rl);border-color:rgba(200,75,49,.15);">
+        <span class="mi" style="color:var(--red)">error_outline</span>
+        <div style="color:var(--red)">Backend not reachable. Start: py backend/app.py</div>
+      </div>`;
+      }
+    }
+
+    function renderImageResult(d, type) {
+      const el = document.getElementById(type + '-result');
+      if (!d.loaded) {
+        el.innerHTML = `<div class="disc"><span class="mi">info</span><div>${d.description || 'Model not loaded.'}</div></div>`; return;
+      }
+      applySpecialistInfo(d);
+      const isGood = d.finding === 'NORMAL' || d.finding === 'normal_skin';
+      const col = isGood ? 'var(--green)' : 'var(--red)';
+      el.innerHTML = `
+    <div style="background:${isGood ? 'var(--gl)' : 'var(--rl)'};border:1px solid ${isGood ? 'rgba(45,106,79,.2)' : 'rgba(200,75,49,.2)'};border-radius:var(--rs);padding:13px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;">
+        <div style="font-size:15px;font-weight:700;color:${col};">${d.display || d.finding}</div>
+        <div style="font-family:'DM Mono',monospace;font-size:18px;font-weight:600;color:${col};">${d.confidence}%</div>
+      </div>
+      <div style="background:rgba(0,0,0,.08);border-radius:3px;height:4px;margin-bottom:9px;">
+        <div style="background:${col};height:100%;border-radius:3px;width:${d.confidence}%;"></div>
+      </div>
+      <div style="font-size:12px;color:var(--t2);margin-bottom:7px;">Specialist: <strong>${d.specialization}</strong></div>
+      ${d.description ? `<p style="font-size:12px;color:var(--t2);line-height:1.5;margin-bottom:7px;">${d.description}</p>` : ''}
+      ${d.precautions?.length ? d.precautions.map(p => `<div style="font-size:12px;color:var(--t2);">• ${p}</div>`).join('') : ''}
+      <div style="font-size:10.5px;color:var(--amber);margin-top:8px;">${d.disclaimer || ''}</div>
+    </div>`;
+    }
+
+    // ── Doctors ───────────────────────────────────────────────────────────────────
+    function loadDoctors() { renderDoctorsSearch(); }
+    function filterDocs() {
+      const spec = document.getElementById('spec-filter').value || lastPrimarySpecialist;
+      lastPrimarySpecialist = spec;
+      lastMapsUrl = `https://www.google.com/maps/search/${encodeURIComponent(spec + ' near me').replace(/%20/g, '+')}`;
+      renderDoctorsSearch();
+    }
+    function renderDoctorsSearch() {
+      const g = document.getElementById('docs-grid');
+      if (!g) return;
+      const secondary = lastSecondarySpecialists.length
+        ? `<div class="doc-info"><span><span class="mi">medical_services</span>Also consider: ${lastSecondarySpecialists.join(', ')}</span></div>`
+        : '';
+      g.innerHTML = `
+    <div class="doc-card">
+      <div class="doc-hdr"><div class="doc-av"><span class="mi">person_pin_circle</span></div>
+        <div><div class="doc-name">${lastPrimarySpecialist}</div><div class="doc-spec">Recommended specialist</div></div>
+      </div>
+      ${secondary}
+      <div class="doc-actions">
+        <button class="doc-btn" style="width:100%;" onclick="openDoctorsMap()"><span class="mi">directions</span>Open Google Maps</button>
+      </div>
+    </div>`;
+    }
+    function renderDocs(docs) {
+      renderDoctorsSearch();
+    }
+    function getLocation() {
+      openDoctorsMap();
+    }
+    const FALLBACK_DOCS = [
+    ];
+
+    // ── History ───────────────────────────────────────────────────────────────────
+    function saveHistory(syms, preds) {
+      if (!preds?.length || preds[0].disease === 'Insufficient data') return;
+      predHistory.unshift({ id: Date.now(), ts: new Date().toLocaleString(), symptoms: syms, predictions: preds });
+      predHistory = predHistory.slice(0, 20);
+      localStorage.setItem('ms3_hist', JSON.stringify(predHistory));
+      document.getElementById('hist-badge').textContent = predHistory.length || '0';
+      renderHistory();
+    }
+    function loadHistory() {
+      try { predHistory = JSON.parse(localStorage.getItem('ms3_hist') || '[]'); } catch { predHistory = []; }
+      document.getElementById('hist-badge').textContent = predHistory.length || '0';
+      renderHistory();
+    }
+    function renderHistory() {
+      const el = document.getElementById('hist-list');
+      if (!predHistory.length) { el.innerHTML = `<div class="empty-state"><span class="mi">history</span><h3>No history</h3><p>Run a prediction to see it here</p></div>`; return; }
+      el.innerHTML = predHistory.map((h, i) => `
+    <div class="pcard" style="margin-bottom:11px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:9px;">
+        <div><div style="font-size:11.5px;color:var(--t3);">${h.ts}</div>
+          <div style="font-size:15px;font-weight:600;">${h.predictions[0]?.disease || '—'}</div></div>
+        <div style="font-family:'DM Mono',monospace;font-size:18px;color:var(--green);">${h.predictions[0]?.probability || 0}%</div>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:9px;">
+        ${(h.symptoms || []).slice(0, 5).map(s => `<div class="sel-tag" style="cursor:default;">${s.replace(/_/g, ' ')}</div>`).join('')}
+      </div>
+      <button onclick="rerunHistory(${i})" style="background:var(--gl);color:var(--green);border:1px solid rgba(45,106,79,.2);border-radius:7px;padding:6px 13px;font-size:12px;font-weight:600;cursor:pointer;">
+        Re-run
+      </button>
+    </div>`).join('');
+    }
+    function rerunHistory(i) {
+      const h = predHistory[i];
+      selSyms = [...(h.symptoms || [])];
+      renderSyms();
+      document.getElementById('pred-btn').disabled = false;
+      nav('predict');
+    }
+
+    // ── Model Metrics ─────────────────────────────────────────────────────────────
+    async function loadMetrics() {
+      const d = await api('/api/model/info');
+      const el = document.getElementById('metrics-panel');
+      if (!d?.data?.metrics) { el.innerHTML = `<div class="disc"><span class="mi">warning_amber</span><div>Backend offline. Run: py backend/app.py</div></div>`; return; }
+      const m = d.data.metrics;
+      el.innerHTML = `
+    <div class="met-grid" style="margin-bottom:15px;">
+      <div class="met-card">
+        <h3 style="font-size:14px;font-weight:600;margin-bottom:13px;">Test Set (20%)</h3>
+        <div class="met-kpis">
+          <div class="kpi"><div class="kpi-val">${(m.test_accuracy * 100).toFixed(1)}%</div><div class="kpi-lbl">Accuracy</div></div>
+          <div class="kpi"><div class="kpi-val">${(m.precision_weighted * 100).toFixed(1)}%</div><div class="kpi-lbl">Precision</div></div>
+          <div class="kpi"><div class="kpi-val">${(m.recall_weighted * 100).toFixed(1)}%</div><div class="kpi-lbl">Recall</div></div>
+          <div class="kpi"><div class="kpi-val">${(m.f1_weighted * 100).toFixed(1)}%</div><div class="kpi-lbl">F1 Score</div></div>
+        </div>
+      </div>
+      <div class="met-card">
+        <h3 style="font-size:14px;font-weight:600;margin-bottom:13px;">XGBoost Config</h3>
+        <div style="display:flex;flex-direction:column;gap:7px;">
+          ${[['Model', 'XGBoost'], ['Trees', '300'], ['Max Depth', '6'], ['Learning Rate', '0.1'], ['Subsample', '0.8'], ['Split', 'Stratified 80/20']].map(([k, v]) => `
+            <div style="display:flex;justify-content:space-between;font-size:12.5px;padding:6px 0;border-bottom:1px solid var(--border);">
+              <span style="color:var(--t2);">${k}</span><span style="font-weight:600;">${v}</span>
+            </div>`).join('')}
+        </div>
+      </div>
+    </div>
+    <div class="met-card">
+      <h3 style="font-size:14px;font-weight:600;margin-bottom:11px;">Safety Rules Active</h3>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px;">
+        ${[['Heart attack', 'Requires chest pain'], ['Paralysis', 'Requires neurological signs'], ['AIDS', 'Requires exposure history'], ['Alcoholic hepatitis', 'Requires alcohol history'], ['Piles', 'Requires rectal symptoms']].map(([d, r]) => `
+          <div style="background:var(--bg);border-radius:var(--rs);padding:9px;font-size:12px;">
+            <div style="font-weight:600;margin-bottom:2px;">${d}</div>
+            <div style="color:var(--t3);">${r}</div>
+          </div>`).join('')}
+      </div>
+    </div>`;
+    }
+
+    // ── Boot ──────────────────────────────────────────────────────────────────────
+    init();
+  </script>
+</body>
+
+</html>
