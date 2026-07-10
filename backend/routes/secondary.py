@@ -22,6 +22,8 @@ secondary_bp = Blueprint("secondary", __name__)
 @secondary_bp.route("/api/predict/xray", methods=["POST"])
 def predict_xray():
     svc = current_app.config["XRAY_SVC"]
+    if not svc.ready:
+     return err("X-ray model is not loaded.", 503)
     if "image" not in request.files:
         return err("Send image as multipart/form-data field 'image'.", 400)
     result = svc.predict(request.files["image"].read())
@@ -92,7 +94,7 @@ def predict_multimodal():
         "fusion_applied":   fused["fusion_applied"],
         "fusion_note":      fused["fusion_note"],
         "disclaimer": (
-            "⚠️ AI-assisted analysis only. NOT a medical diagnosis. "
+            " AI-assisted analysis only. NOT a medical diagnosis. "
             "Always consult a certified healthcare professional."
         ),
     }, "Multi-modal analysis complete")
