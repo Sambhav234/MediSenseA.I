@@ -1,0 +1,18 @@
+services:
+  medisense-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+    container_name: medisense-api
+
+    ports:
+      - "5000:5000"
+
+    env_file:
+      - backend/.env
+
+    volumes:
+      - ./ml/models:/app/ml/models
+
+    restart: unless-stopped

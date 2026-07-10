@@ -1,5 +1,13 @@
 import os, io, logging
 from urllib.parse import quote_plus
+from backend.utils.download_model import download_xray_model
+logging.basicConfig(
+
+    level=logging.INFO,
+
+    format="%(asctime)s | %(levelname)s | %(message)s"
+
+)
 
 import numpy as np
 
@@ -12,9 +20,23 @@ XRAY_CLASSES = ["NORMAL", "PNEUMONIA", "UNCERTAIN"]
 XRAY_IMG_SIZE = (224, 224)
 
 # Model path
+# MODEL_PATH = os.path.join(
+#     os.path.dirname(os.path.abspath(__file__)),
+#     "..", "..", "ml", "models", "xray_model.hdf5"
+# )
+BASE_DIR = os.path.abspath(
+    os.path.join(
+        os.path.dirname(__file__),
+        "..",
+        ".."
+    )
+)
+
 MODEL_PATH = os.path.join(
-    os.path.dirname(os.path.abspath(__file__)),
-    "..", "..", "ml", "models", "xray_model.hdf5"
+    BASE_DIR,
+    "ml",
+    "models",
+    "xray_model.hdf5"
 )
 
 # Specialist mapping
@@ -52,20 +74,81 @@ XRAY_ADVICE = {
 
 
 class XRayService:
+    # def __init__(self, model_path: str = MODEL_PATH):
+    #     self.model_path = os.path.abspath(model_path)
+    #     self.model = None
+    #     self.ready = False
+    #     self._try_load()
     def __init__(self, model_path: str = MODEL_PATH):
         self.model_path = os.path.abspath(model_path)
         self.model = None
         self.ready = False
+
+        log.info("Initializing XRayService...")
+
         self._try_load()
 
+    # def _try_load(self):
+    #     try:
+    #         import tensorflow as tf
+    #         self.model = tf.keras.models.load_model(self.model_path, compile=False)
+    #         self.ready = True
+    #         print(f"[XRayService] Loaded model: {self.model.input_shape}")
+    #     except Exception as e:
+    #         print(f"[XRayService] Load error: {e}")
+    # def _try_load(self):
+
+    #     try:
+
+    #         import tensorflow as tf
+
+    #         # Download if needed
+    #         self.model_path = download_xray_model()
+
+    #         self.model = tf.keras.models.load_model(
+    #             self.model_path,
+    #             compile=False
+    #         )
+
+    #         self.ready = True
+
+    #         print("[XRayService] Model Loaded Successfully")
+
+    #     except Exception as e:
+
+    #         print("[XRayService] Error:", e)
     def _try_load(self):
+        """
+        Downloads the model if necessary and loads it into memory.
+        """
+
         try:
             import tensorflow as tf
-            self.model = tf.keras.models.load_model(self.model_path, compile=False)
+
+            # Download model if missing
+            self.model_path = download_xray_model()
+
+            log.info("Loading X-ray CNN model...")
+
+            self.model = tf.keras.models.load_model(
+                self.model_path,
+                compile=False
+            )
+
             self.ready = True
-            print(f"[XRayService] Loaded model: {self.model.input_shape}")
-        except Exception as e:
-            print(f"[XRayService] Load error: {e}")
+
+            log.info(
+                "X-ray model loaded successfully. Input shape: %s",
+                self.model.input_shape
+            )
+
+        except Exception:
+
+            self.ready = False
+
+            log.exception(
+                "Failed to load X-ray model."
+            )
 
     def predict(self, image_bytes: bytes) -> dict:
         if not self.ready:
@@ -74,7 +157,7 @@ class XRayService:
         arr = self._preprocess(image_bytes)
 
         probs = self.model.predict(arr, verbose=0)[0]
-        print("[XRayService] Raw probabilities:", probs)
+        log.info("Prediction probabilities: %s", probs)
 
         # Ensure valid probability distribution
         if abs(probs.sum() - 1.0) > 0.01:
@@ -121,16 +204,42 @@ class XRayService:
             "disclaimer": "⚠️ AI-assisted only. Always consult a doctor.",
         }
 
+    # def _preprocess(self, image_bytes: bytes) -> np.ndarray:
+    #     from PIL import Image
+
+    #     img = Image.open(io.BytesIO(image_bytes)).convert("RGB")
+    #     img = img.resize(XRAY_IMG_SIZE)  # 🔥 keep full image, no cropping
+
+    #     arr = np.asarray(img, dtype=np.float32)
+
+    #     # Normalize
+    #     arr = arr / 255.0
+
+    #     return arr[np.newaxis, ...]
     def _preprocess(self, image_bytes: bytes) -> np.ndarray:
+
         from PIL import Image
 
-        img = Image.open(io.BytesIO(image_bytes)).convert("RGB")
-        img = img.resize(XRAY_IMG_SIZE)  # 🔥 keep full image, no cropping
+        try:
 
-        arr = np.asarray(img, dtype=np.float32)
+            img = Image.open(
+                io.BytesIO(image_bytes)
+            ).convert("RGB")
 
-        # Normalize
-        arr = arr / 255.0
+        except Exception as e:
+
+            raise ValueError(
+                "Invalid image."
+            ) from e
+
+        img = img.resize(XRAY_IMG_SIZE)
+
+        arr = np.asarray(
+            img,
+            dtype=np.float32
+        )
+
+        arr /= 255.0
 
         return arr[np.newaxis, ...]
 
